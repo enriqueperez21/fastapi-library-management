@@ -1,0 +1,1 @@
+docker run --name postgres-container -e POSTGRES_PASSWORD=postgreskike21 -e POSTGRES_USER=enriquep21 -e POSTGRES_DB=aplicaciones_web_db -p 5432:5432 -d postgres

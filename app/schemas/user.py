@@ -1,4 +1,5 @@
 from pydantic import BaseModel, ConfigDict, EmailStr, field_serializer
+from typing import Optional
 from datetime import date
 
 class UserCreate(BaseModel):
@@ -8,7 +9,15 @@ class UserCreate(BaseModel):
 
     model_config = ConfigDict(from_attributes=True)
 
+class UserUpdate(BaseModel):
+    name: Optional[str] = None
+    email: Optional[EmailStr] = None
+    password: Optional[str] = None
+
+    model_config = ConfigDict(from_attributes=True)
+
 class UserOut(BaseModel):
+    id: int
     name: str
     email: EmailStr
     registration_date: date

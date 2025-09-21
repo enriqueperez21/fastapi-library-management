@@ -10,4 +10,3 @@ class Settings(BaseSettings):
 
 # Instancia única de settings
 settings = Settings()
-print("hello")

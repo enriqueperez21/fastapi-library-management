@@ -1,4 +1,5 @@
 import logging
+import sys
 from app.db.base import Base
 from app.db.session import engine
 import app.models
@@ -11,8 +12,8 @@ def init_db():
         Base.metadata.create_all(bind=engine)
         logger.info("✅ Tablas creadas correctamente")
     except Exception as e:
-        logger.error("❌ Error al crear las tablas", exc_info=True)
-    
+        logger.error(f"❌ Error al crear las tablas {e}")
+        sys.exit(1)
 
 if __name__ == "__main__":
     init_db()

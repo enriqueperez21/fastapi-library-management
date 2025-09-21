@@ -1,5 +1,6 @@
 import logging
 from sqlalchemy import create_engine
+from sqlalchemy.exc import OperationalError
 from sqlalchemy.orm import sessionmaker
 from app.core.config import settings
 from fastapi import HTTPException, status
@@ -14,7 +15,7 @@ def get_db():
     try:
         db = SessionLocal()
         yield db
-    except Exception as e:
+    except OperationalError  as e:
         logger.error(f"Error en la conexión a la base de datos: {e}")
         raise HTTPException(
             status_code=status.HTTP_503_SERVICE_UNAVAILABLE,

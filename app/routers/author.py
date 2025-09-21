@@ -1,10 +1,11 @@
 from fastapi import APIRouter, Depends, Response, status
 from sqlalchemy.orm import Session
-from pydantic import EmailStr
 from app.db.session import get_db
+from app.schemas.author import AuthorCreate, AuthorOut
+from app.services.author import register_author_service
 
-router = APIRouter(prefix="/authors", tags=["users"])
+router = APIRouter(prefix="/authors", tags=["authors"])
 
-@router.get("")
-def search_author(name: str, db: Session = Depends(get_db)):
-    return {"message": "Author name " + name}
+@router.post("", response_model=AuthorOut)
+def search_author(author: AuthorCreate, db: Session = Depends(get_db)):
+    return register_author_service(db, author)

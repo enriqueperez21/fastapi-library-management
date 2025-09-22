@@ -24,7 +24,7 @@ def consult_by_id(db: Session, user_id: int) -> UserOut:
 def consult_all(db: Session) -> List[UserOut]:
     users = user_crud.get_users(db)
     if not users:
-        raise HTTPException(status_code=404, detail="No user has been registered")
+        raise HTTPException(status_code=404, detail="No users found")
     return users
 
 def register(db: Session, user: UserCreate) -> UserOut:
@@ -42,13 +42,17 @@ def register(db: Session, user: UserCreate) -> UserOut:
 def update(db: Session, user_id: int, updates: UserUpdate) -> UserOut:
     user = get_by_id_with_validation(db, user_id)
 
-    existing = user_crud.get_user_by_email(db, updates.email)
-    if existing and existing.id != user.id:
-        raise HTTPException(status_code=400, detail="Email already registered")
+    if updates.email is not None:
+        existing = user_crud.get_user_by_email(db, updates.email)
+        if existing and existing.id != user.id:
+            raise HTTPException(status_code=400, detail="Email already registered")
+        user.email = updates.email
 
-    if updates.name is not None: user.name = updates.name
-    if updates.email is not None: user.email = updates.email
-    if updates.password is not None: user.password = hash_password(updates.password)
+    if updates.name is not None:
+        user.name = updates.name
+
+    if updates.password is not None:
+        user.password = hash_password(updates.password)
 
     return user_crud.update_user(db, user)
 

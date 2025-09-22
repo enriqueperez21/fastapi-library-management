@@ -1,4 +1,4 @@
-from pydantic import BaseModel, ConfigDict, EmailStr, StringConstraints, Field, field_serializer, field_validator
+from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_serializer, field_validator
 from app.core.types    import PasswordStr
 from app.core.security import validate_secury_password
 from typing   import Optional
@@ -12,14 +12,14 @@ class UserBase(BaseModel):
         "example": {
             "name": "Enrique Pérez",
             "email": "enrique@gmail.com",
-            "password": "ContraseñaSegura123."
+            "password": "Contraseña@Segura123"
         }
     })
 
 class UserCreate(UserBase):
     name: str = Field(None, min_length=2, max_length=100, example="Enrique")
     email: EmailStr = Field(None, example="enrique@gmail.com")
-    password: PasswordStr = Field(..., example="StrongPass123.")
+    password: PasswordStr = Field(..., example="Strong@Pass123")
 
     @field_validator("password")
     def validate_password_strength(cls, v: str) -> str:
@@ -61,6 +61,6 @@ class UserLogin(BaseModel):
     model_config = ConfigDict(from_attributes=True, json_schema_extra={
         "example": {
             "email": "enrique@gmail.com",
-            "password": "StrongPass123."
+            "password": "Strong@Pass123."
         }
     })

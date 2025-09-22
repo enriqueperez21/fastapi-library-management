@@ -1,20 +1,39 @@
-from pydantic import BaseModel, ConfigDict, EmailStr, field_serializer
-from typing import Optional
+from pydantic import BaseModel, ConfigDict, EmailStr, StringConstraints, Field, field_serializer, field_validator
+from app.core.types    import PasswordStr
+from app.core.security import validate_secury_password
+from typing   import Optional
 from datetime import date
 
-class UserCreate(BaseModel):
-    name: str
-    email: EmailStr
-    password: str
+class UserBase(BaseModel):
+    name: Optional[str] = Field(None, min_length=2, max_length=100, example="Enrique")
+    email: Optional[EmailStr] = Field(None, example="enrique@gmail.com")
 
-    model_config = ConfigDict(from_attributes=True)
+    model_config = ConfigDict(from_attributes=True, json_schema_extra={
+        "example": {
+            "name": "Enrique Pérez",
+            "email": "enrique@gmail.com",
+            "password": "ContraseñaSegura123."
+        }
+    })
 
-class UserUpdate(BaseModel):
-    name: Optional[str] = None
-    email: Optional[EmailStr] = None
-    password: Optional[str] = None
+class UserCreate(UserBase):
+    name: str = Field(None, min_length=2, max_length=100, example="Enrique")
+    email: EmailStr = Field(None, example="enrique@gmail.com")
+    password: PasswordStr = Field(..., example="StrongPass123.")
 
-    model_config = ConfigDict(from_attributes=True)
+    @field_validator("password")
+    def validate_password_strength(cls, v: str) -> str:
+        return validate_secury_password(v)
+
+
+class UserUpdate(UserBase):
+    password: Optional[PasswordStr] = None
+
+    @field_validator("password")
+    def validate_password_strength(cls, v: Optional[str]) -> Optional[str]:
+        if v is None:
+            return v
+        return validate_secury_password(v)
 
 class UserOut(BaseModel):
     id: int
@@ -22,15 +41,26 @@ class UserOut(BaseModel):
     email: EmailStr
     registration_date: date
 
-    model_config = ConfigDict(from_attributes=True)
+    model_config = ConfigDict(from_attributes=True, json_schema_extra={
+        "example": {
+            "id": 1,
+            "name": "Enrique",
+            "email": "enrique@gmail.com",
+            "registration_date": "21/11/2002"
+        }
+    })
 
     @field_serializer("registration_date")
     def serialize_date(self, value: date) -> str:
-        # 👇 Aquí forzamos formato dd/mm/yyyy
         return value.strftime("%d/%m/%Y")
 
 class UserLogin(BaseModel):
     email: EmailStr
     password: str
 
-    model_config = ConfigDict(from_attributes=True)
+    model_config = ConfigDict(from_attributes=True, json_schema_extra={
+        "example": {
+            "email": "enrique@gmail.com",
+            "password": "StrongPass123."
+        }
+    })

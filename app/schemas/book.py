@@ -1,6 +1,6 @@
 from pydantic import BaseModel, ConfigDict, Field
 from typing import Optional
-from datetime import date
+from fastapi import Query, Depends
 
 class BookBase(BaseModel):
     title: str = Field(..., min_length=1, max_length=100, example="Clean Code")
@@ -34,6 +34,37 @@ class BookOut(BaseModel):
             "title": "Clean Code",
             "year_publication": 2008,
             "author_id": 1,
+            "user_borrow_id": 2
+        }
+    })
+
+class BookSearch(BaseModel):
+    title: Optional[str] = None
+    author_name: Optional[str] = None
+    year: Optional[int] = None
+
+    model_config = ConfigDict(from_attributes=True)
+
+def BookSearchDep(
+    title: Optional[str] = Query(None, example="Clean Code"),
+    author_name: Optional[str] = Query(None, example="Robert Martin"),
+    year: Optional[int] = Query(None, example=2008),
+) -> BookSearch:
+    return BookSearch(title=title, author_name=author_name, year=year)
+
+class BookSearchOut(BaseModel):
+    id: int
+    title: str
+    year_publication: Optional[int]
+    author_name: str
+    user_borrow_id: Optional[int]
+
+    model_config = ConfigDict(from_attributes=True, json_schema_extra={
+        "example": {
+            "id": 1,
+            "title": "Clean Code",
+            "year_publication": 2008,
+            "author_name": "Robet Martin",
             "user_borrow_id": 2
         }
     })

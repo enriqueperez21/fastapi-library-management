@@ -1,5 +1,7 @@
 from sqlalchemy.orm import Session
 from app.models.book import Book
+from app.models.author import Author
+from app.schemas.book import BookSearch
 from typing import List
 
 def get_books(db: Session) -> List[Book]:
@@ -22,3 +24,19 @@ def update_book(db: Session, book: Book) -> Book:
 def delete_book(db: Session, book: Book) -> None:
     db.delete(book)
     db.commit()
+
+def search_book(db: Session, book_search: BookSearch):
+    query = (
+        db.query(Book.id, Book.title, Book.year_publication, Author.name.label("author_name"), Book.user_borrow_id)
+        .join(Author)
+    )
+
+    if book_search.title:
+        query = query.filter(Book.title.ilike(f"%{book_search.title}%"))
+    if book_search.author_name:
+        query = query.filter(Author.name.ilike(f"%{book_search.author_name}%"))
+    if book_search.year:
+        query = query.filter(Book.year_publication == book_search.year)
+
+    results = query.all()
+    return results

@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Depends, Response, status
 from sqlalchemy.orm import Session
 from app.db.session import get_db
-from app.schemas.book import BookCreate, BookUpdate, BookOut
+from app.schemas.book import BookCreate, BookUpdate, BookOut, BookSearch, BookSearchOut, BookSearchDep
 from app.services import book as book_service
 from typing import List
 
@@ -10,6 +10,10 @@ router = APIRouter(prefix="/books", tags=["books"])
 @router.get("", response_model=List[BookOut])
 def get_books(db: Session = Depends(get_db)):
     return book_service.consult_all(db)
+
+@router.get("/search", response_model=List[BookSearchOut])
+def search_books(book_search: BookSearch = Depends(BookSearchDep), db: Session = Depends(get_db)):
+    return book_service.search(db, book_search)
 
 @router.get("/{book_id}", response_model=BookOut)
 def get_book_by_id(book_id: int, db: Session = Depends(get_db)):

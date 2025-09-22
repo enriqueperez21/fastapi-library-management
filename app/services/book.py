@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 from fastapi import HTTPException
 from app.models.book import Book
-from app.schemas.book import BookCreate, BookUpdate
+from app.schemas.book import BookCreate, BookUpdate, BookSearch, BookSearchOut
 from app.crud import book as book_crud, author as author_crud
 from typing import List
 
@@ -50,3 +50,9 @@ def update(db: Session, book_id: int, updates: BookUpdate) -> Book:
 def delete(db: Session, book_id: int) -> None:
     book = get_by_id_with_validation(db, book_id)
     book_crud.delete_book(db, book)
+
+def search(db: Session, book_search: BookSearch) -> List[BookSearchOut]:
+    books = book_crud.search_book(db, book_search)
+    if not books:
+        raise HTTPException(status_code=404, detail="Books searched not founds")
+    return books

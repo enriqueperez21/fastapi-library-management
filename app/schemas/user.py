@@ -1,6 +1,6 @@
 from pydantic import BaseModel, ConfigDict, EmailStr, Field, field_serializer, field_validator
 from app.core.types    import PasswordStr
-from app.core.security import validate_secury_password
+from app.core.validators import validate_secury_password
 from typing   import Optional
 from datetime import date
 

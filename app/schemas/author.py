@@ -3,10 +3,6 @@ from typing import Optional
 from datetime import date, datetime
 
 class AuthorBase(BaseModel):
-    name: Optional[str] = Field(
-        None, 
-        example="Robert Martin"
-    )
     birthdate: Optional[date] = Field(
         None, 
         example="21/11/2002",
@@ -32,12 +28,15 @@ class AuthorBase(BaseModel):
 
 class AuthorCreate(AuthorBase):
     name: str = Field(
-        None, 
+        ..., 
         example="Robert Martin"
     )
 
 class AuthorUpdate(AuthorBase):
-    pass
+    name: Optional[str] = Field(
+        None, 
+        example="Robert Martin"
+    )
 
 class AuthorOut(AuthorBase):
     id: int

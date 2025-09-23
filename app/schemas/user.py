@@ -5,29 +5,27 @@ from typing   import Optional
 from datetime import date
 
 class UserBase(BaseModel):
-    name: Optional[str] = Field(None, min_length=2, max_length=100, example="Enrique")
-    email: Optional[EmailStr] = Field(None, example="enrique@gmail.com")
-
     model_config = ConfigDict(from_attributes=True, json_schema_extra={
-        "example": {
-            "name": "Enrique Pérez",
-            "email": "enrique@gmail.com",
-            "password": "Contraseña@Segura123"
-        }
-    })
+            "example": {
+                "name": "Enrique Pérez",
+                "email": "enrique@gmail.com",
+                "password": "Contraseña@Segura123"
+            }
+        })
 
 class UserCreate(UserBase):
-    name: str = Field(None, min_length=2, max_length=100, example="Enrique")
-    email: EmailStr = Field(None, example="enrique@gmail.com")
+    name: str = Field(..., min_length=2, max_length=100, example="Enrique")
+    email: EmailStr = Field(..., example="enrique@gmail.com")
     password: PasswordStr = Field(..., example="Strong@Pass123")
 
     @field_validator("password")
     def validate_password_strength(cls, v: str) -> str:
         return validate_secury_password(v)
 
-
 class UserUpdate(UserBase):
-    password: Optional[PasswordStr] = None
+    name: Optional[str] = Field(None, min_length=2, max_length=100, example="Enrique")
+    email: Optional[EmailStr] = Field(None, example="enrique@gmail.com")
+    password: Optional[PasswordStr] = Field(None, example="Strong@Pass123")
 
     @field_validator("password")
     def validate_password_strength(cls, v: Optional[str]) -> Optional[str]:

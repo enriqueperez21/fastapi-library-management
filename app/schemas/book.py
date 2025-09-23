@@ -2,15 +2,12 @@ from pydantic import BaseModel, ConfigDict, Field
 from typing import Optional
 from fastapi import Query, Depends
 
-class BookBase(BaseModel):
+class BookCreate(BaseModel):
     title: str = Field(..., min_length=1, max_length=100, example="Clean Code")
     year_publication: Optional[int] = Field(None, ge=0, example=2008)
+    author_id: int = Field(..., example=1)
 
     model_config = ConfigDict(from_attributes=True)
-
-
-class BookCreate(BookBase):
-    author_id: int = Field(..., example=1)
 
 
 class BookUpdate(BaseModel):

@@ -1,5 +1,5 @@
 import pytest
-from app.test.test_data import valid_author, invalid_author_create_inputs, invalid_author_update_inputs
+from app.test.author_data import valid_author, invalid_author_create_inputs, invalid_author_update_inputs
 
 
 @pytest.fixture

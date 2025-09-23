@@ -1,5 +1,5 @@
 import pytest
-from app.test.test_data import valid_user, invalid_user_create_inputs, invalid_user_passwords
+from app.test.user_data import valid_user, invalid_user_create_inputs, invalid_user_passwords
 
 
 @pytest.fixture

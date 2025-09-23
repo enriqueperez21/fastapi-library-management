@@ -1,118 +1,112 @@
 import pytest
-
-valid_user = {
-    "name": "Test User",
-    "email": "test@mail.com",
-    "password": "Strong@123"
-}
+from app.test.test_data import valid_user, invalid_create_inputs, invalid_passwords
 
 
-def test_post_user(client):
+@pytest.fixture
+def created_user(client):
+    return client.post("/users", json=valid_user).json()
+
+
+def test_post(client):
     response = client.post("/users", json=valid_user)
     assert response.status_code == 201
     data = response.json()
-    assert data["name"] == "Test User"
-    assert data["email"] == "test@mail.com"
+    assert data["name"] == valid_user["name"]
+    assert data["email"] == valid_user["email"]
     assert "id" in data
 
 
-def test_get_users(client):
-    response = client.get("/users")
-    assert response.status_code == 404
-
-    client.post("/users", json=valid_user)
+def test_get_all(client, created_user):
     response = client.get("/users")
     assert response.status_code == 200
-    assert response.json()[0]["name"] == "Test User"
-    assert response.json()[0]["email"] == "test@mail.com"
+    assert response.json()[0]["name"] == valid_user["name"]
+    assert response.json()[0]["email"] == valid_user["email"]
     assert isinstance(response.json(), list)
 
 
+def test_get(client, created_user):
+    response = client.get(f"/users/{created_user['id']}")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["name"] == valid_user["name"]
+    assert data["email"] == valid_user["email"]
 
-def test_get_user(client):
+
+def test_get_by_email(client, created_user):
+    response = client.get(f"/users/by-email?email={valid_user['email']}")
+    assert response.status_code == 200
+    data = response.json()
+    assert data["id"] == created_user["id"]
+    assert data["name"] == valid_user["name"]
+    assert data["email"] == valid_user["email"]
+
+
+def test_update_name(client, created_user):
+    response = client.patch(f"/users/{created_user['id']}", json={"name": "Updated User"})
+    assert response.status_code == 200
+    assert response.json()["name"] == "Updated User"
+
+
+def test_update_email(client, created_user):
+    response = client.patch(f"/users/{created_user['id']}", json={"email": "test2@mail.com"})
+    assert response.status_code == 200
+    assert response.json()["email"] == "test2@mail.com"
+
+
+def test_update_password(client, created_user):
+    response = client.patch(f"/users/{created_user['id']}", json={"password": "@123Strong"})
+    assert response.status_code == 200
+
+
+def test_delete(client, created_user):
+    response = client.delete(f"/users/{created_user['id']}")
+    assert response.status_code == 204
+
+    response = client.get(f"/users/{created_user['id']}")
+    assert response.status_code == 404
+
+
+def test_get_all_not_found(client):
+    response = client.get("/users")
+    assert response.status_code == 404
+
+
+def test_get_not_found(client):
     response = client.get(f"/users/1")
     assert response.status_code == 404
 
-    response = client.post("/users", json=valid_user)
-    user_id = response.json()["id"]
 
-    response = client.get(f"/users/{user_id}")
-    assert response.status_code == 200
-    data = response.json()
-    assert data["name"] == "Test User"
-    assert data["email"] == "test@mail.com"
-
-
-def test_get_user_by_email(client):
+def test_get_by_email_not_found(client):
     response = client.get("/users/by-email?email=test@mail.com")
     assert response.status_code == 404
+ 
 
-    response = client.post("/users", json=valid_user)
-    user_id = response.json()["id"]
-
-    response = client.get("/users/by-email?email=test@mail.com")
-    assert response.status_code == 200
-    data = response.json()
-    assert data["id"] == user_id
-    assert data["name"] == "Test User"
-    assert data["email"] == "test@mail.com"
+def test_update_not_found(client):
+    response = client.patch(f"/users/1", json={"name": "Updated User"})
+    assert response.status_code == 404
 
 
-def test_update_user(client):
-    response = client.post("/users", json=valid_user)
-    user_id = response.json()["id"]
-
-    response = client.patch(f"/users/{user_id}", json={"name": "Updated User"})
-    assert response.status_code == 200
-    data = response.json()
-    assert data["name"] == "Updated User"
-
-    response = client.patch(f"/users/{user_id}", json={"email": "test@mail.com"})
-    assert response.status_code == 200
-    data = response.json()
-    assert data["email"] == "test@mail.com"
-
-    response = client.patch(f"/users/{user_id}", json={"password": "@123Strong"})
-    assert response.status_code == 200
-
-
-def test_delete_user(client):
+def test_delete_not_found(client):
     response = client.delete(f"/users/1")
     assert response.status_code == 404
 
-    response = client.post("/users", json=valid_user)
-    user_id = response.json()["id"]
 
-    response = client.delete(f"/users/{user_id}")
-    assert response.status_code == 204
-
-    response = client.get(f"/users/{user_id}")
-    assert response.status_code == 404
-
-
-def assert_error_values_msg(responses, msgs):
-    for response, expected_msg in zip(responses, msgs):
-        assert response.status_code == 422
-        assert expected_msg in response.json()["detail"][0]["msg"]
-
-@pytest.mark.parametrize("invalid_user", [
-    {"name": "Test User", "password": "Strong@123"},
-    {"name": "Test User","email": "test@mail.com"},
-    {"password": "Strong@123"},
-])
-def test_create_user_invalid(client, invalid_user):
+@pytest.mark.parametrize("invalid_user", invalid_create_inputs)
+def test_post_missing_fields(client, invalid_user):
     response = client.post("/users", json=invalid_user)
     assert response.status_code == 422
 
 
-@pytest.mark.parametrize("password, expected_msg", [
-    ("strong", "String should have at least 8 characters"),
-    ("stroooong", "Value error, Password must contain at least one uppercase letter"),
-    ("stroooongS", "Value error, Password must contain at least one number"),
-    ("stroooongS1", "Value error, Password must contain at least one special character (@$!%*?&.)"),
-])
-def test_update_user_invalid_passwords(client, password, expected_msg):
-    user_id = client.post("/users", json=valid_user).json()["id"]
-    response = client.patch(f"/users/{user_id}", json={"password": password})
+@pytest.mark.parametrize("input", invalid_passwords)
+def test_post_invalid_passwords(client, input):
+    response = client.post("/users", json={**valid_user, "password": input["password"]})
     assert response.status_code == 422
-    assert expected_msg in response.json()["detail"][0]["msg"]
+    assert input["msg"] in response.json()["detail"][0]["msg"]
+
+
+@pytest.mark.parametrize("input", invalid_passwords)
+def test_update_invalid_passwords(client, input):
+    user_id = client.post("/users", json=valid_user).json()["id"]
+    response = client.patch(f"/users/{user_id}", json={"password": input["password"]})
+    assert response.status_code == 422
+    assert input["msg"] in response.json()["detail"][0]["msg"]

@@ -24,6 +24,8 @@ class AuthorBase(BaseModel):
     
     @field_serializer("birthdate")
     def serialize_date(self, value: date) -> str:
+        if value is None:
+            return value
         return value.strftime("%d/%m/%Y")
 
 class AuthorCreate(AuthorBase):

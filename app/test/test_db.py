@@ -1,17 +1,14 @@
-import pytest
-
 from sqlalchemy import inspect
 from app.db.base import Base
 from sqlalchemy import text
 from app.db.session import engine
-import app.models
 
-def test_connection():
+def test_connection(client):
     with engine.connect() as conn:
         result = conn.execute(text("SELECT 1"))
         assert result.scalar() == 1
 
-def test_tables_created():
+def test_tables_created(client):
     Base.metadata.create_all(bind=engine)
     inspector = inspect(engine)
 

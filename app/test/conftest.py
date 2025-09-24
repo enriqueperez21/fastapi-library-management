@@ -32,6 +32,7 @@ def assert_200(response):  assert response.status_code == 200
 def assert_201(response):  assert response.status_code == 201
 def assert_204(response):  assert response.status_code == 204
 def assert_400(response):  assert response.status_code == 400
+def assert_401(response):  assert response.status_code == 401
 def assert_404(response):  assert response.status_code == 404
 def assert_422(response):  assert response.status_code == 422
 

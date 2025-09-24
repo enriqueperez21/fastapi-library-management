@@ -1,8 +1,7 @@
 import pytest
 from app.test.conftest import *
 from app.test.users.user_data import valid_user
-
-detail_msg = {"detail": "Incorrect email or password"}
+from app.test.auth.auth_data import detail_msg
 
 @pytest.fixture
 def created_user(client):

@@ -2,7 +2,7 @@
 
 Sistema de gestión de **libros**, **autores** y **usuarios** con autenticación **JWT**, desarrollado con **FastAPI** y **SQLAlchemy**.
 
-[Documentación oficial](https://enriqueperez21.github.io/fastapi-library-management/docs/)
+[Documentación oficial Swagger](https://enriqueperez21.github.io/fastapi-library-management/docs/)
 
 ---
 
@@ -74,7 +74,8 @@ README.md
    uvicorn app.main:app --reload
    ```
 
-   👉 Accede a la documentación interactiva: [Página oficial](https://enriqueperez21.github.io/fastapi-library-management/docs/)
+   👉 Accede a la documentación interactiva Swagger: [Página oficial](https://enriqueperez21.github.io/fastapi-library-management/docs/)
+   👉 Accede a la documentación interactiva Redoc: [Página oficial](https://enriqueperez21.github.io/fastapi-library-management/docs/Redoc/)
 
 ---
 
@@ -91,7 +92,7 @@ python -m pytest --cov=app
 ```
 
 Para ver los resultados de cobertura visitar 
-[Results] (https://github.com/enriqueperez21/fastapi-library-management/blob/master/app/test/TEST_RESULTS.md)
+[Test de cobertura](https://enriqueperez21.github.io/fastapi-library-management/docs/TEST_RESULTS.md)
 
 ---
 

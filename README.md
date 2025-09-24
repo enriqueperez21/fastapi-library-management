@@ -2,7 +2,7 @@
 
 Sistema de gestión de **libros**, **autores** y **usuarios** con autenticación **JWT**, desarrollado con **FastAPI** y **SQLAlchemy**.
 
-[Documentación] (https://github.com/enriqueperez21/fastapi-library-management/blob/master/app/docs/Redoc)
+[Documentación oficial](https://enriqueperez21.github.io/fastapi-library-management/docs/)
 
 ---
 
@@ -74,7 +74,7 @@ README.md
    uvicorn app.main:app --reload
    ```
 
-   👉 Accede a la documentación interactiva: [http://localhost:8000/docs](http://localhost:8000/docs)
+   👉 Accede a la documentación interactiva: [Página oficial](https://enriqueperez21.github.io/fastapi-library-management/docs/)
 
 ---
 

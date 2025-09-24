@@ -2,6 +2,8 @@
 
 Sistema de gestión de **libros**, **autores** y **usuarios** con autenticación **JWT**, desarrollado con **FastAPI** y **SQLAlchemy**.
 
+[Documentación] (https://github.com/enriqueperez21/fastapi-library-management/blob/master/app/docs/Redoc)
+
 ---
 
 ## 📂 Estructura del Proyecto
@@ -88,8 +90,8 @@ Ver cobertura de tests:
 python -m pytest --cov=app
 ```
 
-Para ver los resultados de cobertura visitar
-https://github.com/enriqueperez21/fastapi-library-management/tree/master/app/test
+Para ver los resultados de cobertura visitar 
+[Results] (https://github.com/enriqueperez21/fastapi-library-management/blob/master/app/test/TEST_RESULTS.md)
 
 ---
 
